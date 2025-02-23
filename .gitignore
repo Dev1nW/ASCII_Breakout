@@ -9,6 +9,7 @@ __pycache__/
 all_responses.txt
 HG_API_KEY.txt
 OPENAI_API_KEY.txt
+GOOGLE_API_KEY.txt
 breakout.mp4
 actions_rewards.csv
 .DS_Store

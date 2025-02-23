@@ -1,7 +1,8 @@
 accelerate>=0.26.0
 imageio[ffmpeg]
 pillow==9.5.0
-transformers 
+transformers
+google-genai 
 gymnasium
 imageio
 openai

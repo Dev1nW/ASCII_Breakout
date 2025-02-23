@@ -20,6 +20,10 @@ Two comprehensive 1,000 step tests have been conducted using Llama 3.2 3B and Op
 
 ![4o_video](videos/gpt_4o.gif)
 
+- **Gemini Flash 2.0:** Showed promising initial results in breaking bricks, more results coming soon. Here is the Gameplay:
+
+![gemini_video](videos/gemini_flash.gif)
+
 ## Installation
 
 1. Clone the repository:
@@ -48,6 +52,7 @@ To run this code, you will need to obtain API keys and save them in the project 
 
 - **OpenAI API Key:** Sign up at [OpenAI](https://openai.com/), then navigate to the API keys section to create a new key. Save your key in a file named `OPENAI_API_KEY.txt`.
 - **Hugging Face API Key:** Create an account at [Hugging Face](https://huggingface.co/), then go to your account settings to generate a new API token. Save your key in a file named `HG_API_KEY.txt`.
+- **OpenAI API Key:** Sign up at [Google](https://ai.google.dev), then navigate to the API keys section to create a new key. Save your key in a file named `GOOGLE_API_KEY.txt`.
 
 ## Usage
 
@@ -61,7 +66,9 @@ To run this code, you will need to obtain API keys and save them in the project 
    Upon running the script, you will be prompted to select a language model for the simulation:
 
    - Enter `1` to select **GPT-4o**.
-   - Enter `2` to select **Llama 3.2 3B**.
+   - Enter `2` to select **Gemini Flash 2.0**.
+   - Enter `3` to select **Gemini Pro 2.0**.
+   - Enter `4` to select **Llama 3.2 3B**.
 
 3. **Execution:**
 
