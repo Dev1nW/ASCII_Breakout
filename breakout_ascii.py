@@ -45,8 +45,10 @@ class BrickBreakerEnv(gym.Env):
         self.render_mode = render_mode
         max_length = self.WIN_HEIGHT * (self.WIN_WIDTH + 1)
         self.observation_space = Text(max_length=max_length)
+        # Actions: 0 = no move, 1 = move left, 2 = move right
         self.action_space = gym.spaces.Discrete(3)
-        self.paddle_speed = 2
+        # Update paddle speed to 4 to match the curses version
+        self.paddle_speed = 4  
         self.paddle_width = 7
         self.brick_start_y = 1 + self.GAP_ABOVE_BRICKS
         self.paddle_y = (self.brick_start_y + self.BRICK_ROWS) + self.GAP_BETWEEN_BRICKS_AND_PADDLE
@@ -67,12 +69,15 @@ class BrickBreakerEnv(gym.Env):
 
     def _get_ascii(self):
         grid = [[" " for _ in range(self.WIN_WIDTH)] for _ in range(self.WIN_HEIGHT)]
+        # Draw top and bottom borders.
         for x in range(self.WIN_WIDTH):
             grid[0][x] = "#"
             grid[self.WIN_HEIGHT - 1][x] = "#"
+        # Draw left and right borders.
         for y in range(self.WIN_HEIGHT):
             grid[y][0] = "#"
             grid[y][self.WIN_WIDTH - 1] = "#"
+        # Draw bricks.
         for i in range(self.BRICK_ROWS):
             for j in range(self.BRICK_COLS):
                 if self.bricks[i, j] == 1:
@@ -82,9 +87,11 @@ class BrickBreakerEnv(gym.Env):
                         ch = "|" if bx == 0 or bx == self.BRICK_WIDTH - 1 else "_"
                         if brick_x + bx < self.WIN_WIDTH - 1:
                             grid[brick_y][brick_x + bx] = ch
+        # Draw paddle.
         for i in range(self.paddle_width):
             if 0 <= self.paddle_x + i < self.WIN_WIDTH - 1:
                 grid[self.paddle_y][self.paddle_x + i] = "="
+        # Draw ball.
         bx = int(round(self.ball_x))
         by = int(round(self.ball_y))
         if 0 <= by < self.WIN_HEIGHT and 0 <= bx < self.WIN_WIDTH:
@@ -92,54 +99,71 @@ class BrickBreakerEnv(gym.Env):
         return "\n".join("".join(row) for row in grid)
 
     def step(self, action):
+        # Paddle movement based on action.
         if action == 1:
             self.paddle_x = max(1, self.paddle_x - self.paddle_speed)
         elif action == 2:
             self.paddle_x = min(self.WIN_WIDTH - 1 - self.paddle_width, self.paddle_x + self.paddle_speed)
+
         reward = 0
+        # Update ball position.
         new_ball_x = self.ball_x + self.ball_dx
         new_ball_y = self.ball_y + self.ball_dy
+
+        # Bounce off left/right walls.
         if new_ball_x <= 0:
             new_ball_x = 0
             self.ball_dx = -self.ball_dx
         elif new_ball_x >= self.WIN_WIDTH - 1:
             new_ball_x = self.WIN_WIDTH - 1
             self.ball_dx = -self.ball_dx
+
+        # Bounce off top wall.
         if new_ball_y <= 0:
             new_ball_y = 0
             self.ball_dy = -self.ball_dy
+        # Handle bottom wall: lose a life.
         elif new_ball_y >= self.WIN_HEIGHT - 1:
             self.lives -= 1
             if self.lives <= 0:
                 return self._get_ascii(), 0, True, False, {"score": self.score}
+            # Reset ball and paddle.
             new_ball_x = self.WIN_WIDTH // 2
             new_ball_y = self.paddle_y - 1
             self.ball_dx = random.choice([-1, 1])
             self.ball_dy = -1
             self.paddle_x = 1 + (self.INTERIOR_WIDTH - self.paddle_width) // 2
-        if int(new_ball_y) == self.paddle_y and self.paddle_x <= int(new_ball_x) < self.paddle_x + self.paddle_width:
+
+        # Collision with paddle.
+        if int(round(new_ball_y)) == self.paddle_y and self.paddle_x <= new_ball_x < self.paddle_x + self.paddle_width:
             new_ball_y = self.paddle_y - 1
             self.ball_dy = -abs(self.ball_dy)
             hit_offset = (new_ball_x - self.paddle_x) - (self.paddle_width / 2)
             self.ball_dx = 1 if hit_offset >= 0 else -1
-        brick_row = int(new_ball_y) - self.brick_start_y
-        if 0 <= brick_row < self.BRICK_ROWS:
+
+        # Check collision with bricks.
+        ball_cell_y = int(round(new_ball_y))
+        if self.brick_start_y <= ball_cell_y < self.brick_start_y + self.BRICK_ROWS:
+            brick_row = ball_cell_y - self.brick_start_y
             for j in range(self.BRICK_COLS):
                 brick_x = 1 + j * self.BRICK_WIDTH
-                brick_y = self.brick_start_y + brick_row
                 if (self.bricks[brick_row, j] == 1 and 
-                    brick_y == int(new_ball_y) and 
-                    brick_x <= int(new_ball_x) < brick_x + self.BRICK_WIDTH):
+                    brick_x <= int(round(new_ball_x)) < brick_x + self.BRICK_WIDTH):
                     self.bricks[brick_row, j] = 0
                     self.ball_dy = -self.ball_dy
                     reward += 10
                     self.score += 10
                     break
+
+        # Update ball coordinates.
         self.ball_x = new_ball_x
         self.ball_y = new_ball_y
+
+        # Check for win condition.
         done = (np.sum(self.bricks) == 0)
         if done:
             reward += 50
+
         return self._get_ascii(), reward, done, False, {"score": self.score}
 
     def render(self, mode="human"):
