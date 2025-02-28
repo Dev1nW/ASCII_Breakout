@@ -10,6 +10,13 @@ An implementation of the classic Atari 2600 game, Breakout, using ASCII characte
 
 ## Performance
 
+### NEW RESULTS:
+
+- **GPT-4o:** Using the updated ball collision performance was increased! Here is the Gameplay:
+
+![4o_video](videos/gpt4o_new.gif)
+
+### OLD RESULTS:
 Two comprehensive 1,000 step tests have been conducted using Llama 3.2 3B and OpenAI’s GPT-4o models:
 
 - **Llama 3.2 3B:** Demonstrated reasonable performance at the beginning but shortly started to only provide left or right actions without aligning with the ball. Here is the Gameplay:
