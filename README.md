@@ -5,8 +5,8 @@ An implementation of the classic Atari 2600 game, Breakout, using ASCII characte
 ## Features
 
 - ASCII-based representation of the classic Breakout game.
-- Integration with language models to interpret game states and generate actions.
-- Performance comparison between different models (Llama 3.2 3B and OpenAI’s GPT-4o).
+- Integration with language models (GPT-4o, Gemini Pro, Gemini Flash, Llama 3.2 3B) to interpret game states and generate actions.
+- Performance comparison between different models.
 
 ## Performance
 
@@ -17,7 +17,7 @@ An implementation of the classic Atari 2600 game, Breakout, using ASCII characte
 ![4o_video](videos/gpt4o_new.gif)
 
 ### OLD RESULTS:
-Two comprehensive 1,000 step tests have been conducted using Llama 3.2 3B and OpenAI’s GPT-4o models:
+Two comprehensive 1,000 step tests have been conducted using Llama 3.2 3B and OpenAI's GPT-4o models:
 
 - **Llama 3.2 3B:** Demonstrated reasonable performance at the beginning but shortly started to only provide left or right actions without aligning with the ball. Here is the Gameplay:
 
@@ -30,6 +30,8 @@ Two comprehensive 1,000 step tests have been conducted using Llama 3.2 3B and Op
 - **Gemini Flash 2.0:** Showed promising initial results in breaking bricks, more results coming soon. Here is the Gameplay:
 
 ![gemini_video](videos/gemini_flash.gif)
+
+_(Note: Gemini Pro 2.5 is also supported, but performance results are not yet available due to computational costs.)_
 
 ## Installation
 
@@ -59,29 +61,32 @@ To run this code, you will need to obtain API keys and save them in the project 
 
 - **OpenAI API Key:** Sign up at [OpenAI](https://openai.com/), then navigate to the API keys section to create a new key. Save your key in a file named `OPENAI_API_KEY.txt`.
 - **Hugging Face API Key:** Create an account at [Hugging Face](https://huggingface.co/), then go to your account settings to generate a new API token. Save your key in a file named `HG_API_KEY.txt`.
-- **OpenAI API Key:** Sign up at [Google](https://ai.google.dev), then navigate to the API keys section to create a new key. Save your key in a file named `GOOGLE_API_KEY.txt`.
+- **Google API Key:** Sign up at [Google AI Studio](https://ai.google.dev), then navigate to the API keys section to create a new key. Save your key in a file named `GOOGLE_API_KEY.txt`.
 
 ## Usage
 
-1. Run the main script:
+1. Run the main script using a command-line argument to specify the model:
 
    ```
-   python breakout_ascii.py
+   python breakout_ascii.py --model <model_name>
    ```
-2. **Model Selection:**
 
-   Upon running the script, you will be prompted to select a language model for the simulation:
+   Replace `<model_name>` with one of the following:
+   - `gpt4o`
+   - `geminipro`
+   - `geminiflash`
+   - `llama`
 
-   - Enter `1` to select **GPT-4o**.
-   - Enter `2` to select **Gemini Flash 2.0**.
-   - Enter `3` to select **Gemini Pro 2.0**.
-   - Enter `4` to select **Llama 3.2 3B**.
+   For example, to use GPT-4o:
+   ```
+   python breakout_ascii.py --model gpt4o
+   ```
 
-3. **Execution:**
+2. **Execution:**
 
    After selecting a model, the script will initiate a 1,000 step simulation where the chosen language model determines the gameplay actions at each step. During this process:
 
-   - All model outputs are saved in `all_response.txt`.
+   - All model outputs are saved in `all_responses.txt`.
    - Upon completion, a video of the performance is saved as `breakout.mp4`.
    - All actions and rewards are recorded in `actions_rewards.csv`.
 
